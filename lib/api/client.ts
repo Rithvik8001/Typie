@@ -102,4 +102,12 @@ class MockApiClient implements ApiPort {
   }
 }
 
-export const apiClient: ApiPort = new MockApiClient();
+// Swap to Supabase implementation
+export const apiClient: ApiPort = new (await (async () => {
+  try {
+    const mod = await import("./supabase-client");
+    return mod.supabaseApiClient.constructor;
+  } catch {
+    return MockApiClient as any;
+  }
+})())();

@@ -61,12 +61,12 @@ export default function DashboardPage() {
               <p className="text-sm text-muted-foreground mb-3">
                 You must be signed in to view the dashboard.
               </p>
-              <button
+              <Link
+                href="/auth/signin"
                 className="rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm"
-                onClick={() => signIn()}
               >
-                Sign in with Google (mock)
-              </button>
+                Go to sign in
+              </Link>
             </CardContent>
           </Card>
         ) : null}
