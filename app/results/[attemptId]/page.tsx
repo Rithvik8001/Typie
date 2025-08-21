@@ -13,15 +13,25 @@ export default function ResultsPage() {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
 
   useEffect(() => {
-    apiClient.getAttempt(attemptId).then((a) => {
-      if (a) return setAttempt(a);
+    let cancelled = false;
+    (async () => {
       try {
-        const raw = sessionStorage.getItem(`typie_attempt_${attemptId}`);
-        if (raw) setAttempt(JSON.parse(raw) as Attempt);
-      } catch {
-        /* ignore */
+        const a = await apiClient.getAttempt(attemptId);
+        if (!cancelled && a) {
+          setAttempt(a);
+          return;
+        }
+      } catch {}
+      if (!cancelled) {
+        try {
+          const raw = sessionStorage.getItem(`typie_attempt_${attemptId}`);
+          if (raw) setAttempt(JSON.parse(raw) as Attempt);
+        } catch {}
       }
-    });
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [attemptId]);
 
   if (!attempt) return null;

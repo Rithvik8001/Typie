@@ -23,8 +23,15 @@ export default function SignInPage() {
     setError(null);
     setLoading(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
       if (!signInWithEmail) throw new Error("Sign in not available");
-      await signInWithEmail(email.trim(), password);
+      if (cleanEmail.length < 5 || !cleanEmail.includes("@")) {
+        throw new Error("Please enter a valid email address.");
+      }
+      if (password.length < 8) {
+        throw new Error("Password must be at least 8 characters.");
+      }
+      await signInWithEmail(cleanEmail, password);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err?.message || "Sign in failed");

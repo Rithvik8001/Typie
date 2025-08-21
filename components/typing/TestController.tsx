@@ -158,6 +158,15 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
     }
   }, [state.remaining, state.status, state.cursor, state.snippet.body.length]);
 
+  // Defensive: bound cursor to snippet length to avoid out-of-range access
+  useEffect(() => {
+    if (state.cursor > state.snippet.body.length) {
+      // This should not happen, but guard to prevent runtime errors
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      dispatch({ type: "BACKSPACE", expectedPrev: null });
+    }
+  }, [state.cursor, state.snippet.body.length]);
+
   useEffect(() => {
     if (state.status !== "finished") return;
     const elapsed = state.timerSec - state.remaining;
