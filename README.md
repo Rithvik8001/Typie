@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Typie — Minimal Typing Test (Next.js + Supabase)
 
-## Getting Started
+Typie is a clean, accessible typing test built with Next.js 15, Tailwind v4, shadcn/ui, and Supabase. It focuses on real-time feedback, distraction-free UI, and a smooth path from mocks to production.
 
-First, run the development server:
+### Features
+
+- Live test: 15/30/45/60/120s, raw/adjusted WPM, accuracy, errors
+- Per-char highlighting, backspace handling, anti-paste during run
+- Filters: difficulty, tags, and character filters (A–Z, 0–9, symbols)
+- Results with KPIs + WPM-over-time chart (Recharts)
+- Dashboard with period filters (7d/30d/all), pagination, mini-stats
+- Email/password auth via Supabase
+- Mobile responsive, keyboard-first, high-contrast design
+
+### Tech
+
+- Next.js 15 (App Router), TypeScript (strict)
+- Tailwind CSS v4, shadcn/ui, Recharts
+- Supabase (Auth + Postgres)
+- pnpm for scripts
+
+### Quickstart
+
+1. Install deps
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Environment
+   Create `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Dev
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/
+  page.tsx                # Landing
+  play/                   # Setup + test UI
+  results/                # Results view
+  dashboard/              # Auth-only dashboard
+  auth/                   # Signup/Signin
+components/
+  typing/                 # Core typing + dashboard UI
+  ui/                     # shadcn/ui components
+lib/
+  api/                    # ApiPort + Supabase client
+  auth/                   # Auth context + adapter
+  supabase/               # Supabase client factory
+  metrics.ts, time.ts, types.ts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Accessibility & Security
 
-## Deploy on Vercel
+- Visible focus rings; keyboard-first flows
+- No dangerouslySetInnerHTML; plain-text snippets
+- Client-side validation for auth
+- Supabase RLS on attempts; prose-only snippets
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev     # start
+pnpm build   # build
+pnpm start   # run production build
+```
