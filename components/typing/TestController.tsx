@@ -5,7 +5,7 @@ import TextRenderer from "./TextRenderer";
 import StatsHud from "./StatsHud";
 import { adjustedWpm, accuracy as calcAccuracy, rawWpm } from "@/lib/metrics";
 import type { MetricsTick, Snippet, TimerOption } from "@/lib/types";
-import { countdown, rafThrottle } from "@/lib/time";
+import { countdown } from "@/lib/time";
 
 type State = {
   status: "idle" | "running" | "finished";
@@ -114,6 +114,23 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
 
   useEffect(() => {
     if (state.status === "running") inputRef.current?.focus();
+    if (state.status === "idle") inputRef.current?.focus();
+  }, [state.status]);
+
+  // Global Space to start when idle; Esc to end when running (with confirm)
+  useEffect(() => {
+    function onWindowKey(e: KeyboardEvent) {
+      if (state.status === "idle" && e.key === " ") {
+        e.preventDefault();
+        dispatch({ type: "START" });
+      } else if (state.status === "running" && e.key === "Escape") {
+        e.preventDefault();
+        const ok = window.confirm("End test early?");
+        if (ok) dispatch({ type: "END" });
+      }
+    }
+    window.addEventListener("keydown", onWindowKey);
+    return () => window.removeEventListener("keydown", onWindowKey);
   }, [state.status]);
 
   useEffect(() => {
@@ -210,6 +227,10 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
         spellCheck={false}
         autoCorrect="off"
         autoCapitalize="none"
+        aria-label="Typing input"
+        onBlur={() => {
+          if (state.status === "running") inputRef.current?.focus();
+        }}
         onKeyDown={onKeyDown}
         onPaste={(e) => state.status === "running" && e.preventDefault()}
         onCopy={(e) => state.status === "running" && e.preventDefault()}

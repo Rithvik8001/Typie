@@ -10,6 +10,7 @@ export interface ApiPort {
   listSnippets(filters: {
     difficulty?: Difficulty;
     tags?: SnippetTag[];
+    charFilters?: StartOptions["charFilters"];
   }): Promise<Snippet[]>;
   createSession(
     opts: StartOptions

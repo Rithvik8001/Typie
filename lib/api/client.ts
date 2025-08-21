@@ -26,12 +26,26 @@ class MockApiClient implements ApiPort {
   async listSnippets(filters: {
     difficulty?: Difficulty;
     tags?: SnippetTag[];
+    charFilters?: StartOptions["charFilters"];
   }): Promise<Snippet[]> {
-    const { difficulty, tags } = filters;
+    const { difficulty, tags, charFilters } = filters;
     let rows = [...MOCK_SNIPPETS];
     if (difficulty) rows = rows.filter((s) => s.difficulty === difficulty);
     if (tags && tags.length > 0)
       rows = rows.filter((s) => tags.every((t) => s.tags.includes(t)));
+    if (charFilters) {
+      const { uppercase, numbers, symbols } = charFilters;
+      rows = rows.filter((s) => {
+        const hasUpper = /[A-Z]/.test(s.body);
+        const hasNum = /\d/.test(s.body);
+        const hasSym = /[^\w\s]/.test(s.body);
+        return (
+          (uppercase ? hasUpper : true) &&
+          (numbers ? hasNum : true) &&
+          (symbols ? hasSym : true)
+        );
+      });
+    }
     return delay(rows, 250);
   }
 
@@ -42,6 +56,7 @@ class MockApiClient implements ApiPort {
     const matches = await this.listSnippets({
       difficulty: opts.difficulty,
       tags: opts.tags,
+      charFilters: opts.charFilters,
     });
     const snippet =
       matches[Math.floor(Math.random() * matches.length)] ?? MOCK_SNIPPETS[0];

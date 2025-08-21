@@ -49,6 +49,11 @@ export type StartOptions = {
   timer: TimerOption;
   difficulty?: Difficulty;
   tags?: SnippetTag[]; // e.g., ["english"] | ["code"]
+  charFilters?: {
+    uppercase?: boolean;
+    numbers?: boolean;
+    symbols?: boolean;
+  };
 };
 
 // Internal input shape for deriving metrics from key events during a run.

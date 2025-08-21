@@ -27,6 +27,7 @@ const DEFAULTS: StartOptions = {
   timer: 60,
   difficulty: "medium",
   tags: ["english"],
+  charFilters: { uppercase: false, numbers: false, symbols: false },
 };
 
 export default function PlaySetupPage() {
@@ -120,6 +121,36 @@ export default function PlaySetupPage() {
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
+          </section>
+
+          <section>
+            <Label className="mb-2 block">Character Filters</Label>
+            <ToggleGroup
+              type="multiple"
+              value={Object.entries(value.charFilters ?? {})
+                .filter(([, v]) => Boolean(v))
+                .map(([k]) => k)}
+              onValueChange={(vals) => {
+                onChange({
+                  charFilters: {
+                    uppercase: vals.includes("uppercase"),
+                    numbers: vals.includes("numbers"),
+                    symbols: vals.includes("symbols"),
+                  },
+                });
+              }}
+              className="flex flex-wrap gap-2"
+            >
+              <ToggleGroupItem value="uppercase" aria-label="Uppercase">
+                Include A-Z
+              </ToggleGroupItem>
+              <ToggleGroupItem value="numbers" aria-label="Numbers">
+                Include 0-9
+              </ToggleGroupItem>
+              <ToggleGroupItem value="symbols" aria-label="Symbols">
+                Include symbols
+              </ToggleGroupItem>
+            </ToggleGroup>
           </section>
 
           <div className="flex justify-end">
