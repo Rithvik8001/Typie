@@ -9,6 +9,8 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { apiClient } from "@/lib/api/client";
 import type { Attempt } from "@/lib/types";
 import { BackButton } from "@/components/ui/back-button";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const { user, loading: authLoading, signIn } = useAuth();
@@ -19,16 +21,24 @@ export default function DashboardPage() {
   const [rows, setRows] = useState<Attempt[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
     setLoading(true);
+    setError(null);
     apiClient
       .listAttempts(user.id, { period, page, pageSize })
       .then(({ rows, total }) => {
         setRows(rows);
         setTotal(total);
+        // Clamp page if out of range after filter change
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (total > 0 && page > totalPages) {
+          setPage(totalPages);
+        }
       })
+      .catch(() => setError("Failed to load attempts. Please try again."))
       .finally(() => setLoading(false));
   }, [user, period, page]);
 
@@ -106,6 +116,8 @@ export default function DashboardPage() {
                 <div className="h-20 rounded-lg bg-muted animate-pulse" />
                 <div className="h-20 rounded-lg bg-muted animate-pulse" />
               </div>
+            ) : error ? (
+              <div className="text-sm text-destructive">{error}</div>
             ) : (
               <MiniStats attempts={allForKpis} />
             )}
@@ -125,6 +137,39 @@ export default function DashboardPage() {
                     className="h-10 rounded-lg bg-muted animate-pulse"
                   />
                 ))}
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-destructive">{error}</div>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (user) {
+                      setLoading(true);
+                      setError(null);
+                      apiClient
+                        .listAttempts(user.id, { period, page, pageSize })
+                        .then(({ rows, total }) => {
+                          setRows(rows);
+                          setTotal(total);
+                        })
+                        .catch(() =>
+                          setError("Failed to load attempts. Please try again.")
+                        )
+                        .finally(() => setLoading(false));
+                    }
+                  }}
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : total === 0 ? (
+              <div className="text-sm text-muted-foreground">
+                No attempts yet.{" "}
+                <Link className="underline" href="/play">
+                  Start a typing test
+                </Link>{" "}
+                to see your results here.
               </div>
             ) : (
               <AttemptsTable

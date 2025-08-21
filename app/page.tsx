@@ -41,7 +41,12 @@ export default function Home() {
               </Link>
             </Button>
             {user ? (
-              <Button variant="outline" onClick={signOut} size="lg">
+              <Button
+                variant="outline"
+                onClick={signOut}
+                size="lg"
+                className="hover:bg-destructive/10 hover:text-destructive"
+              >
                 Sign out
               </Button>
             ) : (
