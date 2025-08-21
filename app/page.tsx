@@ -35,23 +35,25 @@ export default function Home() {
                 <Keyboard className="mr-2 h-4 w-4" /> Start Typing Test
               </Link>
             </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link href="/dashboard">
-                <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-              </Link>
-            </Button>
             {user ? (
-              <Button
-                variant="outline"
-                onClick={signOut}
-                size="lg"
-                className="hover:bg-destructive/10 hover:text-destructive"
-              >
-                Sign out
-              </Button>
+              <>
+                <Button asChild variant="secondary" size="lg">
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={signOut}
+                  size="lg"
+                  className="hover:bg-destructive/10 hover:text-destructive"
+                >
+                  Sign out
+                </Button>
+              </>
             ) : (
-              <Button variant="outline" onClick={signIn} size="lg">
-                Sign in with Google
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/auth/signup">Create account</Link>
               </Button>
             )}
           </div>
