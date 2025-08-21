@@ -33,6 +33,8 @@ class MockApiClient implements ApiPort {
     if (difficulty) rows = rows.filter((s) => s.difficulty === difficulty);
     if (tags && tags.length > 0)
       rows = rows.filter((s) => tags.every((t) => s.tags.includes(t)));
+    // Only allow plain text snippets (no code)
+    rows = rows.filter((s) => !s.isCode);
     if (charFilters) {
       const { uppercase, numbers, symbols } = charFilters;
       rows = rows.filter((s) => {

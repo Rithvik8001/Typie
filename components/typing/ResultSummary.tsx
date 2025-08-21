@@ -101,6 +101,23 @@ export default function ResultSummary({ attempt }: Props) {
             <div className="text-muted-foreground">Duration</div>
             <div className="font-mono text-lg">{attempt.timerSec}s</div>
           </div>
+          <div className="sm:col-span-3">
+            <div className="text-muted-foreground">Top Errors</div>
+            {Object.keys(attempt.errorMap).length === 0 ? (
+              <div className="text-xs text-muted-foreground">No error data</div>
+            ) : (
+              <ul className="mt-1 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {Object.entries(attempt.errorMap)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 5)
+                  .map(([w, c]) => (
+                    <li key={w} className="font-mono text-sm">
+                      {w}: {c}
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </div>
         </CardContent>
       </Card>
 

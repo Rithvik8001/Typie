@@ -21,6 +21,7 @@ import type {
   TimerOption,
 } from "@/lib/types";
 import { apiClient } from "@/lib/api/client";
+import { BackButton } from "@/components/ui/back-button";
 
 const TIMER_OPTIONS: TimerOption[] = [15, 30, 45, 60, 120];
 const DEFAULTS: StartOptions = {
@@ -62,6 +63,9 @@ export default function PlaySetupPage() {
 
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
+      <div className="absolute left-4 top-4">
+        <BackButton />
+      </div>
       <Card className="w-full max-w-3xl rounded-2xl">
         <CardHeader>
           <CardTitle className="font-mono">Setup</CardTitle>

@@ -6,6 +6,7 @@ import TestController from "@/components/typing/TestController";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MetricsTick, Snippet, TimerOption } from "@/lib/types";
 import { apiClient } from "@/lib/api/client";
+import { BackButton } from "@/components/ui/back-button";
 
 type SessionPayload = {
   snippet: Snippet;
@@ -63,13 +64,41 @@ export default function SessionPage() {
         errorMap: {},
         cpsSeries: draft.cpsSeries,
       })
-      .then(({ attemptId }) => router.replace(`/results/${attemptId}`));
+      .then(({ attemptId }) => {
+        try {
+          const attempt = {
+            id: attemptId,
+            userId: "mock-user-1",
+            snippetId: data!.snippet.id,
+            mode: "time" as const,
+            timerSec: data!.timer,
+            rawWpm: draft.rawWpm,
+            accuracy: draft.accuracy,
+            adjustedWpm: draft.adjustedWpm,
+            totalChars: draft.totalChars,
+            correctChars: draft.correctChars,
+            errorMap: {},
+            cpsSeries: draft.cpsSeries,
+            createdAt: new Date().toISOString(),
+          };
+          sessionStorage.setItem(
+            `typie_attempt_${attemptId}`,
+            JSON.stringify(attempt)
+          );
+        } catch {
+          /* ignore */
+        }
+        router.replace(`/results/${attemptId}`);
+      });
   };
 
   if (!data) return null;
 
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
+      <div className="absolute left-4 top-4">
+        <BackButton />
+      </div>
       <Card className="w-full max-w-4xl rounded-2xl">
         <CardHeader>
           <CardTitle className="font-mono">Typing Test</CardTitle>
@@ -80,6 +109,10 @@ export default function SessionPage() {
             timer={data.timer}
             onFinish={onFinish}
           />
+          <p className="mt-4 text-xs text-muted-foreground">
+            Tip: Press Space to (re)start. If you finish the paragraph early,
+            the test ends automatically.
+          </p>
         </CardContent>
       </Card>
     </div>

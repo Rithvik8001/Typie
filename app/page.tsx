@@ -6,11 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth/auth-context";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Keyboard, LayoutDashboard } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function Home() {
   const { user, signIn, signOut } = useAuth();
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
+      <div className="absolute left-4 top-4">
+        <BackButton />
+      </div>
       <Card className="w-full max-w-3xl rounded-2xl">
         <CardHeader className="space-y-2 text-center">
           <div className="mx-auto h-12 w-12 rounded-xl bg-primary/10 text-primary grid place-items-center">

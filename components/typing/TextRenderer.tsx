@@ -27,7 +27,7 @@ export default function TextRenderer({
             key={i}
             className={cn(
               "transition-colors",
-              isTyped && !isError && "text-foreground",
+              isTyped && !isError && "text-primary",
               isError && "bg-destructive/10 underline decoration-destructive",
               !isTyped && !isError && "text-muted-foreground",
               isCurrent && "border-b-2 border-b-primary"

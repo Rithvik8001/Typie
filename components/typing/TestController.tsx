@@ -125,8 +125,8 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
         dispatch({ type: "START" });
       } else if (state.status === "running" && e.key === "Escape") {
         e.preventDefault();
-        const ok = window.confirm("End test early?");
-        if (ok) dispatch({ type: "END" });
+        // Be quiet: avoid blocking dialogs in the typing flow
+        dispatch({ type: "END" });
       }
     }
     window.addEventListener("keydown", onWindowKey);
@@ -149,7 +149,14 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
     if (state.remaining === 0 && state.status !== "finished") {
       dispatch({ type: "END" });
     }
-  }, [state.remaining, state.status]);
+    // End if finished snippet before time
+    if (
+      state.cursor >= state.snippet.body.length &&
+      state.status === "running"
+    ) {
+      dispatch({ type: "END" });
+    }
+  }, [state.remaining, state.status, state.cursor, state.snippet.body.length]);
 
   useEffect(() => {
     if (state.status !== "finished") return;
@@ -208,7 +215,9 @@ export default function TestController({ snippet, timer, onFinish }: Props) {
   const adj = useMemo(() => adjustedWpm(rw, acc), [rw, acc]);
 
   return (
-    <div className="space-y-4">
+    <div
+      className={`space-y-4 ${state.status === "running" ? "select-none" : ""}`}
+    >
       <StatsHud
         rawWpm={Math.round(rw)}
         adjustedWpm={adj}
