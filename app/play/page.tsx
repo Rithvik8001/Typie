@@ -44,7 +44,15 @@ export default function PlaySetupPage() {
     if (!canStart) return;
     setLoading(true);
     try {
-      const { sessionId } = await apiClient.createSession(value);
+      const { sessionId, snippet } = await apiClient.createSession(value);
+      try {
+        sessionStorage.setItem(
+          `typie_session_${sessionId}`,
+          JSON.stringify({ snippet, timer: value.timer })
+        );
+      } catch {
+        /* ignore */
+      }
       router.push(`/play/${sessionId}`);
     } finally {
       setLoading(false);
